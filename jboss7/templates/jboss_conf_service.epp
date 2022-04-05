@@ -1,0 +1,35 @@
+# General configuration for the init.d scripts,
+# not necessarily for JBoss EAP itself.
+# default location: /etc/default/jboss-eap
+
+## Location of JDK
+# JAVA_HOME="/usr/lib/jvm/default-java"
+# JAVA_HOME="<%= $jboss7::java_home %>"
+## Location of JBoss EAP
+ JBOSS_HOME="<%= $jboss_homes %>"
+
+## The username who should own the process.
+ JBOSS_USER=jboss
+
+## The mode JBoss EAP should start, standalone or domain
+ JBOSS_MODE=standalone
+
+## Configuration for standalone mode
+ JBOSS_CONFIG=standalone.xml
+#  JBOSS_CONFIG=standalone-full-ha.xml
+
+# JBOSS_DOMAIN_CONFIG=domain.xml
+# JBOSS_HOST_CONFIG=host-master.xml
+
+## The amount of time to wait for startup
+ STARTUP_WAIT=15
+
+## The amount of time to wait for shutdown
+ SHUTDOWN_WAIT=15
+
+## Location to keep the console log
+ JBOSS_CONSOLE_LOG="<%= $jboss_homes %>/standalone/log/console.log"
+
+## Additionals args to include in startup
+# JBOSS_OPTS="--admin-only -b 127.0.0.1"
+

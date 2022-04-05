@@ -1,0 +1,13 @@
+[Unit]
+Description=JBoss EAP Systemctl script
+After=network-online.target
+
+[Service]
+Type=forking
+ExecStart=<%= $jboss_homes %>/bin/init.d/<%= $jvm_name %>.sh start
+ExecStop=<%= $jboss_homes %>/bin/init.d/<%= $jvm_name %>.sh stop
+ExecReload=<%= $jboss_homes %>/bin/init.d/<%= $jvm_name %>.sh restart
+PIDFile=<%= $jboss_homes %>/bin/<%= $jvm_name %>.pid
+
+[Install]
+WantedBy=multi-user.target

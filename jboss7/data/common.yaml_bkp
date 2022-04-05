@@ -1,0 +1,4 @@
+---
+classes:
+  - jboss7
+jboss_base: 'Test_naval_jvm'

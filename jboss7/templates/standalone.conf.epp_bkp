@@ -1,0 +1,129 @@
+## -*- shell-script -*- ######################################################
+##                                                                          ##
+##  JBoss Bootstrap Script Configuration                                    ##
+##                                                                          ##
+##############################################################################
+
+#
+# This file is optional; it may be removed if not needed.
+#
+
+#
+# Specify the maximum file descriptor limit, use "max" or "maximum" to use
+# the default, as queried by the system.
+#
+# Defaults to "maximum"
+#
+#MAX_FD="maximum"
+
+#
+# Specify the profiler configuration file to load.
+#
+# Default is to not load profiler configuration file.
+#
+#PROFILER=""
+
+#
+# Specify the location of the Java home directory.  If set then $JAVA will
+# be defined to $JAVA_HOME/bin/java, else $JAVA will be "java".
+#
+#JAVA_HOME="/opt/java/jdk"
+JAVA_HOME="<%= $jboss7::java_home %>"
+JBOSS_HOME="<%= $jboss_homes %>"
+PATH="<%= $jboss7::java_home %>/bin:<%= $jboss_homes %>/bin:$PATH"
+<% if $instance_name =~ /(?i:SAAL)/ { -%>
+APP_NAME="<%= $app_name %>"
+APP_HOME="<%= $app_home %>"
+APPLICATION_CODE_DIR=$APP_HOME/deploy
+<%# PORT_SET=ports-default -%>
+LOG_OUTPUT_DIR=/apps/jboss-logs/eap7/SAALApp2
+SAAL_LIBPATH=$APPLICATION_CODE_DIR/auth.war/WEB-INF/lib/
+SAAL_CONFIGPATH=$APP_HOME/conf/config/
+appD=/apps/jboss/eap7/appd/appagent-current
+JBOSS_CLASSPATH="$SAAL_LIBPATH/commons-logging-1.2.jar:$SAAL_LIBPATH/log4j-1.2.16.jar:$SAAL_LIBPATH/jasypt-1.2.jar:$SAAL_LIBPATH/jstl-1.2.jar:$SAAL_LIBPATH/mail-1.4.jar:$SAAL_LIBPATH/sfadmin.jar:$SAAL_LIBPATH/spring-aop-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-beans-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-context-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-context-support-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-core-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-expression-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-jdbc-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-orm-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-web-3.2.17.RELEASE.jar:$SAAL_LIBPATH/spring-webmvc-3.2.17.RELEASE.jar:$SAAL_LIBPATH/utilities.jar:$SAAL_LIBPATH/spring-data-commons-core-1.4.1.RELEASE.jar:$SAAL_LIBPATH/spring-data-commons-core-1.4.1.RELEASE.jar:$SAAL_LIBPATH/spring-tx-3.2.17.RELEASE.jar:$SAAL_LIBPATH/javax.servlet-api-3.0.1.jar:$SAAL_LIBPATH/commons-dbcp-1.4.jar:$SAAL_LIBPATH/aopalliance-1.0.jar:$SAAL_LIBPATH/commons-pool-1.5.4.jar $SAAL_CONFIGPATH"
+<% } -%>
+<% elsif $instance_name =~ /(?i:AM360)/ { -%> 
+lob_root=/apps/mp
+lob_logs=/apps/mp-logs
+lc="<%= $lc %>"
+#wily_profile=myhr-test
+app=nucleus     #check#
+app_root=$lob_root/$app
+app_logs=$lob_logs/$app
+client="<%= $client %>" 
+#check#
+war="<%= $war %>"
+#check#
+deploy_dir=$lob_root/installedApps/$app/$lc/eap7/$war         #check#
+config_dir=$app_root/$lc/$client/config
+log_dir=$app_logs/$lc/$client/logs
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -d64"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Djboss.server.log.dir=$log_dir"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -DServerInstance=<%= $jvm_name %>" #check with Domes/Stephen/Saurav#
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Djboss.server.deploy.dir=$deploy_dir"       # profile.xml
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dmyhr.config=$config_dir"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dlifecycle_phase=$lc"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -DprprConfigRoot=$pcr_dir"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -DhfimConfigRoot=$config_dir/hfim/$lc"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dfile.encoding=UTF-8"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dclient.encoding.override=UTF-8"
+#GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Djava.awt.headless=true"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -DLD_PRELOAD=/apps/jboss/eap7/appd/machineagent/extensions/NetVizExtension/agent/lib/appd-netlib.so -javaagent:$appD/javaagent.jar -Dappdynamics.socket.collection.bci.enable=true -Dappdynamics.agent.maxMetrics=10000 -Dappdynamics.agent.applicationName=<%= $appd_appname %> -Dappdynamics.agent.tierName=<%= $appd_tiername %> -Dappdynamics.agent.nodeName=<%= $appd_nodename %>"
+GLIC_JAVA_OPTS="${GLIC_JAVA_OPTS} -Dappdynamics.http.proxyHost=cisco-sig.glic.com -Dappdynamics.http.proxyPort=443"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -DSweeperTurned=<%= $sweeper %>"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dlifecycle_phase_env=<%= $lifecycle_phase_env %>"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Djboss.server.log.threshold=ERROR"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -DWorkflowTurned=<%= $workflow %>"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dhttps.protocols=TLSv1"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Djboss.as.deployment.ondemand=false"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dmy.jvmRoute=<%= $jvm_name %>"
+GLIC_JAVA_OPTS="$GLIC_JAVA_OPTS -Dsession_concurrency=on"
+# Specify the exact Java VM executable to use.
+#
+#JAVA=""
+<% } -%>
+HOST=`hostname`
+HOSTNAME=$HOST
+INSTANCE_NAME="<%= $instance_name %>"
+NODE="<%= $node_name %>"
+
+<%= $jboss7::filemanager::custom_java_opts %>
+JAVA_OPTS="-Dcom.sun.management.jmxremote.port=<%= $jmx_port %> -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Djboss.platform.mbeanserver -Djava.rmi.server.hostname=<%= $rmi_server %> $JAVA_OPTS"
+#JAVA_OPTS="$JAVA_OPTS -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS -Djava.awt.headless=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Xbootclasspath/p:<%= $jboss_homes %>/modules/system/layers/base/org/jboss/logmanager/main/jboss-logmanager-2.1.14.Final-redhat-00001.jar  -Xbootclasspath/p:<%= $jboss_homes %>/modules/system/layers/base/org/wildfly/common/main/wildfly-common-1.5.1.Final-redhat-00001.jar"
+JAVA_OPTS="-DLD_PRELOAD=/apps/jboss/eap7/appd/machineagent/extensions/NetVizExtension/agent/lib/appd-netlib.so -javaagent:$appD/javaagent.jar -Dappdynamics.socket.collection.bci.enable=true -Dappdynamics.agent.maxMetrics=10000 -Dappdynamics.http.proxyHost=cisco-sig.glic.com -Dappdynamics.http.proxyPort=443 -Dappdynamics.agent.applicationName=<%= $appd_appname %> -Dappdynamics.agent.tierName=<%= $appd_tiername %> -Dappdynamics.agent.nodeName=<%= $appd_nodename %> -DServerInstance=<%= $node_name %> -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dsun.lang.ClassLoader.allowArraySyntax=true -Dlifecycle_phase=<%= $lifecycle_phase %> -Dlifecycle_phase_env=<%= $lifecycle_phase_env %> -Dsaal.config=$SAAL_CONFIGPATH"
+if [ "x$JBOSS_MODULES_SYSTEM_PKGS" = "x" ]; then
+   JBOSS_MODULES_SYSTEM_PKGS="org.jboss.byteman,com.singularity,org.jboss.logmanager"
+fi
+
+# Uncomment the following line to prevent manipulation of JVM options
+# by shell scripts.
+#
+#PRESERVE_JAVA_OPTS=true
+
+#
+# Specify options to pass to the Java VM.
+#
+if [ "x$JAVA_OPTS" = "x" ]; then
+   JAVA_OPTS="$JAVA_OPTS -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS -Djava.awt.headless=true -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Xbootclasspath/p:<%= $jboss_homes %>/modules/system/layers/base/org/jboss/logmanager/main/jboss-logmanager-2.1.14.Final-redhat-00001.jar  -Xbootclasspath/p:<%= $jboss_homes %>/modules/system/layers/base/org/wildfly/common/main/wildfly-common-1.5.1.Final-redhat-00001.jar"
+   JAVA_OPTS="-Xms<%= $jboss_xms %> -Xmx<%= $jboss_xmx %>"
+   JAVA_OPTS="$JAVA_OPTS <%= $java_opts %>"
+else
+   echo "JAVA_OPTS already set in environment; overriding default settings with values: $JAVA_OPTS"
+fi
+
+# Sample JPDA settings for remote socket debugging
+<% if $remote_debug { -%>
+JAVA_OPTS="$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=<%= $remote_debug_port %>,server=y,suspend=n"
+<% } -%>
+# Sample JPDA settings for shared memory debugging
+#JAVA_OPTS="$JAVA_OPTS -agentlib:jdwp=transport=dt_shmem,server=y,suspend=n,address=jboss"
+
+# Uncomment to not use JBoss Modules lockless mode
+#JAVA_OPTS="$JAVA_OPTS -Djboss.modules.lockless=false"
+
+# Uncomment to gather JBoss Modules metrics
+#JAVA_OPTS="$JAVA_OPTS -Djboss.modules.metrics=true"
+
+# Uncomment this in order to be able to run WildFly on FreeBSD
+# when you get "epoll_create function not implemented" message in dmesg output
+#JAVA_OPTS="$JAVA_OPTS -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.PollSelectorProvider"
